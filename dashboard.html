@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flower Dashboard — Simulasi Federated Analytics</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2d;--panel2:#172238;--line:#263650;--text:#edf3ff;--muted:#9cabc4;--pink:#ff5b8d;--green:#48d7a0;--blue:#65a7ff;--yellow:#ffc766}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#162340 0,#0b1020 58%);color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+.wrap{max-width:1220px;margin:auto;padding:28px 20px 40px}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:24px}.brand{display:flex;align-items:center;gap:13px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#ff6b9a,#9b78ff);display:grid;place-items:center;font-weight:900;font-size:20px;box-shadow:0 8px 28px #ff5b8d30}.eyebrow{color:#aab8d0;font-size:11px;letter-spacing:.16em;text-transform:uppercase}.title{font-size:23px;font-weight:800;letter-spacing:-.03em}.sub{color:var(--muted);font-size:13px}.status{display:flex;align-items:center;gap:8px;border:1px solid #315548;background:#102b29;padding:9px 13px;border-radius:999px;color:#9af1ca;font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #48d7a0}
+.controls{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid #344563;color:var(--text);background:#18243a;border-radius:10px;padding:10px 15px;font-weight:700;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-1px);border-color:#7196d4}.btn.primary{background:linear-gradient(135deg,#ff5b8d,#b66cff);border:0;color:#fff}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:15px}.stat,.panel{background:linear-gradient(180deg,#141e33f5,#111a2cfa);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 36px #00000018}.stat{padding:16px 18px}.statlabel{color:var(--muted);font-size:12px}.statvalue{font-size:27px;font-weight:800;letter-spacing:-.04em;margin:5px 0 0}.accent{color:var(--green)}.pink{color:var(--pink)}.blue{color:var(--blue)}.yellow{color:var(--yellow)}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(290px,1fr);gap:15px}.panel{padding:19px}.panelhead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.ptitle{font-size:15px;font-weight:800}.pdesc{font-size:12px;color:var(--muted);margin-top:3px}.pill{border:1px solid #33435f;color:#b8c7df;background:#17233a;border-radius:8px;padding:5px 8px;font-size:11px;white-space:nowrap}
+.topology{height:330px;position:relative;border:1px solid #24334e;border-radius:13px;background:radial-gradient(ellipse at center,#1a2945 0,#10192b 75%);overflow:hidden}.topology svg{position:absolute;inset:0;width:100%;height:100%}.node{position:absolute;width:136px;min-height:94px;background:#17243b;border:1px solid #3a4b68;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-shadow:0 10px 24px #0003;z-index:2;transition:border-color .3s,box-shadow .3s}.node .ico{font-size:24px}.node strong{font-size:13px}.node small{color:var(--muted);font-size:11px}.node.server{left:calc(50% - 68px);top:20px;border-color:#aa6796}.node.client1{left:5%;bottom:22px}.node.client2{left:calc(50% - 68px);bottom:22px}.node.client3{right:5%;bottom:22px}.node.active{border-color:var(--green);box-shadow:0 0 0 2px #48d7a025,0 0 25px #48d7a02a}.node.sending{border-color:var(--pink);box-shadow:0 0 0 2px #ff5b8d25,0 0 25px #ff5b8d2a}.node .state{font-size:10px;border-radius:999px;padding:2px 7px;background:#263550;color:#bdcbe0}.node.active .state{background:#153e35;color:#83f0bf}.node.sending .state{background:#48233a;color:#ff9ebd}.legend{display:flex;gap:15px;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:11px}.legend span{display:flex;align-items:center;gap:6px}.key{width:7px;height:7px;border-radius:50%}
+.rightstack{display:grid;gap:15px;align-content:start}.clientlist{display:grid;gap:10px}.clientrow{border:1px solid #263650;background:#151f33;border-radius:11px;padding:11px 12px;display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px}.clientico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#24314b;font-size:17px}.clientname{font-weight:700;font-size:12px}.clientmeta{font-size:11px;color:var(--muted)}.tag{font-size:10px;padding:4px 7px;border-radius:6px;background:#21334b;color:#b7c9e5}.tag.done{background:#153c32;color:#8bf0c2}.log{height:175px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding-right:3px}.logitem{display:grid;grid-template-columns:55px 1fr;gap:9px;font-size:11px}.time{color:#7488a7;font-variant-numeric:tabular-nums}.logtext{color:#cbd6e8}.logtext b{color:#fff}.logtext .ok{color:var(--green)}.logtext .send{color:var(--pink)}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}.chart{height:165px;display:flex;align-items:flex-end;gap:12px;padding:12px 4px 0;border-bottom:1px solid #30415e}.barcol{height:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px;min-width:0}.bar{width:min(36px,75%);height:var(--h);min-height:4px;background:linear-gradient(180deg,#ff83a8,#a76cff);border-radius:7px 7px 2px 2px;transition:height .45s}.barlabel{font-size:10px;color:var(--muted);white-space:nowrap}.barval{font-size:10px;color:#d9e3f5}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.mini{padding:12px;background:#151f33;border:1px solid #283953;border-radius:11px}.mini .n{font-size:20px;font-weight:800}.mini .l{font-size:11px;color:var(--muted)}.notice{color:#8fa0bb;font-size:11px;margin-top:16px;line-height:1.6}.notice b{color:#dbe6f7}
+@media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}.grid,.bottom{grid-template-columns:1fr}.topology{height:350px}.node{width:112px}.node.server,.node.client2{left:calc(50% - 56px)}.node.client1{left:2%}.node.client3{right:2%}.title{font-size:19px}}
+@media(max-width:460px){.wrap{padding:18px 12px}.stats{gap:8px}.stat{padding:12px}.statvalue{font-size:22px}.node{width:95px;min-height:85px}.node.server,.node.client2{left:calc(50% - 47px)}.node strong{font-size:11px}.node small{font-size:9px}.topology{height:330px}.panel{padding:14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">f</div><div><div class="eyebrow">Flower • Federated Analytics</div><div class="title">Federation Dashboard</div><div class="sub">Simulasi interaksi 1 server · 3 client</div></div></div>
+    <div class="controls"><div class="status"><i class="dot"></i><span id="statusText">SIAP DIJALANKAN</span></div><button class="btn primary" id="startBtn">▶ Mulai simulasi</button><button class="btn" id="resetBtn">↻ Reset</button></div>
+  </header>
+  <section class="stats">
+    <div class="stat"><div class="statlabel">Server aktif</div><div class="statvalue accent" id="serverStat">1 / 1</div></div>
+    <div class="stat"><div class="statlabel">Client terhubung</div><div class="statvalue blue" id="clientStat">0 / 3</div></div>
+    <div class="stat"><div class="statlabel">Putaran analisis</div><div class="statvalue pink" id="roundStat">0 <span style="font-size:12px;color:#91a1bc;font-weight:500">/ 3</span></div></div>
+    <div class="stat"><div class="statlabel">Pesan terkirim</div><div class="statvalue yellow" id="messageStat">0</div></div>
+  </section>
+  <section class="grid">
+    <div class="panel">
+      <div class="panelhead"><div><div class="ptitle">Topologi jaringan federasi</div><div class="pdesc">Alur permintaan server dan respons dari setiap client</div></div><span class="pill" id="phasePill">MENUNGGU</span></div>
+      <div class="topology" id="topology">
+        <svg viewBox="0 0 700 330" preserveAspectRatio="none" aria-label="Koneksi server ke tiga client">
+          <defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#61799f"/></marker></defs>
+          <path id="line1" d="M350 110 C290 160 120 165 120 235" fill="none" stroke="#405575" stroke-width="2" stroke-dasharray="5 6" marker-end="url(#arrow)"/>
+          <path id="line2" d="M350 110 L350 235" fill="none" stroke="#405575" stroke-width="2" stroke-dasharray="5 6" marker-end="url(#arrow)"/>
+          <path id="line3" d="M350 110 C410 160 580 165 580 235" fill="none" stroke="#405575" stroke-width="2" stroke-dasharray="5 6" marker-end="url(#arrow)"/>
+          <circle id="packet1" r="5" fill="#ff5b8d" opacity="0"><animateMotion dur="1.1s" repeatCount="indefinite" path="M350 110 C290 160 120 165 120 235"/></circle>
+          <circle id="packet2" r="5" fill="#65a7ff" opacity="0"><animateMotion dur="1.1s" repeatCount="indefinite" path="M350 110 L350 235"/></circle>
+          <circle id="packet3" r="5" fill="#48d7a0" opacity="0"><animateMotion dur="1.1s" repeatCount="indefinite" path="M350 110 C410 160 580 165 580 235"/></circle>
+        </svg>
+        <div class="node server" id="serverNode"><div class="ico">🖥️</div><strong>Flower Server</strong><small>Koordinator / agregator</small><span class="state" id="serverState">Standby</span></div>
+        <div class="node client1" id="node1"><div class="ico">💻</div><strong>Client 01</strong><small>Partisi data A</small><span class="state" id="state1">Offline</span></div>
+        <div class="node client2" id="node2"><div class="ico">💻</div><strong>Client 02</strong><small>Partisi data B</small><span class="state" id="state2">Offline</span></div>
+        <div class="node client3" id="node3"><div class="ico">💻</div><strong>Client 03</strong><small>Partisi data C</small><span class="state" id="state3">Offline</span></div>
+      </div>
+      <div class="legend"><span><i class="key" style="background:var(--pink)"></i>Permintaan / query</span><span><i class="key" style="background:var(--blue)"></i>Data diproses lokal</span><span><i class="key" style="background:var(--green)"></i>Hasil dikirim</span></div>
+    </div>
+    <div class="rightstack">
+      <div class="panel">
+        <div class="panelhead"><div><div class="ptitle">Status client</div><div class="pdesc">Progres pemrosesan per node</div></div><span class="pill">3 NODES</span></div>
+        <div class="clientlist">
+          <div class="clientrow"><div class="clientico">💻</div><div><div class="clientname">Client 01</div><div class="clientmeta" id="meta1">Menunggu instruksi</div></div><span class="tag" id="tag1">IDLE</span></div>
+          <div class="clientrow"><div class="clientico">💻</div><div><div class="clientname">Client 02</div><div class="clientmeta" id="meta2">Menunggu instruksi</div></div><span class="tag" id="tag2">IDLE</span></div>
+          <div class="clientrow"><div class="clientico">💻</div><div><div class="clientname">Client 03</div><div class="clientmeta" id="meta3">Menunggu instruksi</div></div><span class="tag" id="tag3">IDLE</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panelhead"><div><div class="ptitle">Log aktivitas</div><div class="pdesc">Jejak interaksi simulasi secara langsung</div></div><span class="pill" id="logCount">0 EVENTS</span></div>
+        <div class="log" id="log"><div class="logitem"><span class="time">00:00</span><div class="logtext">Dashboard siap. Tekan <b>Mulai simulasi</b> untuk memulai.</div></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="bottom">
+    <div class="panel">
+      <div class="panelhead"><div><div class="ptitle">Hasil histogram lokal</div><div class="pdesc">Contoh jumlah observasi yang dihitung masing-masing client</div></div><span class="pill">PANDAS-STYLE</span></div>
+      <div class="chart" id="chart">
+        <div class="barcol"><span class="barval" id="v1">—</span><div class="bar" id="bar1" style="--h:4%"></div><span class="barlabel">Client 01</span></div>
+        <div class="barcol"><span class="barval" id="v2">—</span><div class="bar" id="bar2" style="--h:4%"></div><span class="barlabel">Client 02</span></div>
+        <div class="barcol"><span class="barval" id="v3">—</span><div class="bar" id="bar3" style="--h:4%"></div><span class="barlabel">Client 03</span></div>
+        <div class="barcol"><span class="barval" id="v4">—</span><div class="bar" id="bar4" style="--h:4%"></div><span class="barlabel">Gabungan</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panelhead"><div><div class="ptitle">Ringkasan agregasi</div><div class="pdesc">Nilai contoh setelah respons client digabung server</div></div><span class="pill" id="aggPill">BELUM ADA DATA</span></div>
+      <div class="summary">
+        <div class="mini"><div class="n blue" id="rows">0</div><div class="l">Observasi dianalisis</div></div>
+        <div class="mini"><div class="n accent" id="features">0</div><div class="l">Client merespons</div></div>
+        <div class="mini"><div class="n yellow" id="latency">—</div><div class="l">Latensi simulasi</div></div>
+      </div>
+      <p class="notice"><b>Catatan:</b> Ini adalah simulasi antarmuka front-end untuk pembelajaran. Angka dan animasi dibuat lokal di browser; belum terhubung ke server Flower sungguhan atau Flower Dashboard backend.</p>
+    </div>
+  </section>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let running=false, step=0, timer=null, messages=0, events=0, responses=[0,0,0], totalRows=0;
+const clients=[
+ {id:1,rows:48,color:'#ff5b8d',species:[18,16,14]},
+ {id:2,rows:52,color:'#65a7ff',species:[17,18,17]},
+ {id:3,rows:50,color:'#48d7a0',species:[15,17,18]}
+];
+function log(text){events++;const d=$('log');const item=document.createElement('div');item.className='logitem';const t=new Date();const stamp=String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0');item.innerHTML='<span class="time">'+stamp+'</span><div class="logtext">'+text+'</div>';d.prepend(item);while(d.children.length>30)d.lastChild.remove();$('logCount').textContent=events+' EVENTS'}
+function setNode(i,state,tag,meta){$('node'+i).classList.remove('active','sending');if(state==='active')$('node'+i).classList.add('active');if(state==='sending')$('node'+i).classList.add('sending');$('state'+i).textContent=tag;$('tag'+i).textContent=tag.toUpperCase();$('tag'+i).className='tag'+(['Selesai','Online'].includes(tag)?' done':'');$('meta'+i).textContent=meta}
+function updateStats(){$('clientStat').textContent=responses.filter(x=>x>0).length+' / 3';$('roundStat').innerHTML=Math.min(Math.ceil(step/4),3)+' <span style="font-size:12px;color:#91a1bc;font-weight:500">/ 3</span>';$('messageStat').textContent=messages;$('features').textContent=responses.filter(x=>x>0).length;$('rows').textContent=totalRows}
+function chartUpdate(){const vals=clients.map((c,i)=>responses[i]?c.rows:0);const sum=vals.reduce((a,b)=>a+b,0);const all=[...vals,sum];all.forEach((v,i)=>{ $('v'+(i+1)).textContent=v||'—';$('bar'+(i+1)).style.setProperty('--h',Math.max(4,v/150*100)+'%')});$('aggPill').textContent=sum?'AGREGASI SELESAI':'BELUM ADA DATA';$('latency').textContent=sum?(0.4+Math.random()*0.8).toFixed(2)+' s':'—'}
+function tick(){step++;const round=Math.min(Math.ceil(step/4),3);if(step===1){$('statusText').textContent='BERJALAN';$('phasePill').textContent='DISCOVERY';$('serverState').textContent='Mencari client';$('serverNode').classList.add('active');log('<b>Server</b> aktif dan memulai sesi federasi.');}
+else if(step===2){$('phasePill').textContent='QUERY DIKIRIM';$('serverState').textContent='Mengirim query';['packet1','packet2','packet3'].forEach(id=>$(id).setAttribute('opacity','1'));clients.forEach(c=>{setNode(c.id,'sending','Menerima','Query histogram diterima')});messages+=3;log('<span class="send">Server → 3 client:</span> mengirim instruksi hitung histogram.');}
+else if(step===3){$('phasePill').textContent='PROSES LOKAL';clients.forEach(c=>setNode(c.id,'active','Memproses','Menghitung data lokal dengan Pandas'));$('serverState').textContent='Menunggu respons';log('<b>Client 01–03</b> memproses partisi masing-masing secara lokal. Data mentah tetap berada di client.');}
+else if(step===4){$('phasePill').textContent='RESPONS MASUK';clients.forEach((c,i)=>{responses[i]=round;setNode(c.id,'sending','Mengirim','Ringkasan statistik siap dikirim')});messages+=3;totalRows=clients.reduce((s,c,i)=>s+(responses[i]?c.rows:0),0);chartUpdate();log('<span class="ok">3 respons diterima:</span> client mengirim ringkasan histogram, bukan data mentah.');}
+else if(step===5){$('phasePill').textContent='AGREGASI';$('serverState').textContent='Menggabungkan';$('serverNode').classList.add('active');clients.forEach(c=>setNode(c.id,'active','Selesai','Hasil lokal terkirim'));messages++;log('<b>Server</b> menggabungkan hasil histogram dari seluruh client.');}
+else if(step===6){$('phasePill').textContent='PUTARAN SELESAI';$('serverState').textContent='Agregasi selesai';$('packet1').setAttribute('opacity','0');$('packet2').setAttribute('opacity','0');$('packet3').setAttribute('opacity','0');log('<span class="ok">Putaran '+round+'/3 selesai.</span> Hasil gabungan tersedia di dashboard.');if(round<3){step=0;updateStats();return}else{finish();return}}
+updateStats();if(step===6){return}}
+function finish(){running=false;clearInterval(timer);timer=null;$('statusText').textContent='SELESAI';$('phasePill').textContent='SELESAI';$('startBtn').textContent='▶ Jalankan lagi';$('serverState').textContent='Selesai';$('serverNode').classList.add('active');log('<span class="ok"><b>Simulasi selesai.</b></span> Server menerima respons dari 3 client. Tekan Jalankan lagi atau Reset untuk mengulang.')}
+function start(){if(running)return;if(step>=6){reset();}running=true;$('startBtn').textContent='Ⅱ Berjalan…';$('startBtn').disabled=true;timer=setInterval(()=>{tick();if(!running){$('startBtn').disabled=false;$('startBtn').textContent='▶ Jalankan lagi'}},1100)}
+function reset(){running=false;clearInterval(timer);timer=null;step=0;messages=0;events=0;responses=[0,0,0];totalRows=0;$('log').innerHTML='';$('statusText').textContent='SIAP DIJALANKAN';$('phasePill').textContent='MENUNGGU';$('serverState').textContent='Standby';$('serverNode').classList.remove('active','sending');clients.forEach(c=>setNode(c.id,'','Offline','Menunggu instruksi'));['packet1','packet2','packet3'].forEach(id=>$(id).setAttribute('opacity','0'));$('startBtn').disabled=false;$('startBtn').textContent='▶ Mulai simulasi';$('aggPill').textContent='BELUM ADA DATA';$('latency').textContent='—';chartUpdate();updateStats();$('log').innerHTML='<div class="logitem"><span class="time">00:00</span><div class="logtext">Dashboard siap. Tekan <b>Mulai simulasi</b> untuk memulai.</div></div>';events=0;$('logCount').textContent='0 EVENTS'}
+$('startBtn').addEventListener('click',start);$('resetBtn').addEventListener('click',reset);updateStats();chartUpdate();
+</script>
+</body>
+</html>
